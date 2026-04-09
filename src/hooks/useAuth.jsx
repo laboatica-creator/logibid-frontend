@@ -61,6 +61,7 @@ export const useAuth = () => {
     localStorage.removeItem('token')
     delete api.defaults.headers.common['Authorization']
     setUser(null)
+    window.location.href = '/login'
   }
 
   return { user, loading, login, register, logout }
