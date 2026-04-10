@@ -4,20 +4,30 @@ import api from '../services/api'
 import { motion } from 'framer-motion'
 import { CreditCard, ArrowRight, User, Hash, Calendar, CheckCircle } from 'lucide-react'
 import Header from '../components/Layout/Header'
+import PaymentMethodsSection from '../components/Payments/PaymentMethodsSection'
+import PayoutMethodsSection from '../components/Payments/PayoutMethodsSection'
+import InvoiceList from '../components/Invoices/InvoiceList'
+import { invoiceService } from '../services/invoiceService'
+import { playPaymentReleasedSound } from '../services/soundService'
 
 const PaymentsPage = () => {
   const { user } = useAuth()
   const [payments, setPayments] = useState([])
+  const [invoices, setInvoices] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchPayments()
+    fetchData()
   }, [])
 
-  const fetchPayments = async () => {
+  const fetchData = async () => {
     try {
-      const response = await api.get('/payments/user')
-      setPayments(response.data)
+      const [payRes, invRes] = await Promise.all([
+         api.get('/payments/user'),
+         invoiceService.getInvoices().catch(()=>[])
+      ])
+      setPayments(payRes.data || payRes)
+      if(Array.isArray(invRes)) setInvoices(invRes)
     } catch (error) {
       console.error('Error fetching payments:', error)
     } finally {
@@ -29,8 +39,8 @@ const PaymentsPage = () => {
     if (!window.confirm('¿Liberar el pago al transportista? Esta acción no se puede deshacer.')) return
     try {
       await api.post('/payments/release', { paymentId })
-      // Mostrar notificacion bonita aquí si hubiera.
-      fetchPayments()
+      playPaymentReleasedSound()
+      fetchData()
     } catch (error) {
       console.error('Error releasing payment:', error)
       alert('Error al liberar el pago')
@@ -45,26 +55,22 @@ const PaymentsPage = () => {
       refunded: { css: 'bg-red-50 border-red-200 text-red-700', label: 'Reembolsado' }
     }
     const { css, label } = configs[status] || { css: 'bg-gray-50 border-gray-200 text-gray-700', label: status }
-    return (
-      <span className={`px-3 py-1.5 rounded-full text-xs font-bold border ${css}`}>
-        {label}
-      </span>
-    )
+    return <span className={`px-3 py-1.5 rounded-full text-xs font-bold border ${css}`}>{label}</span>
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    )
-  }
+  if (loading) return <div className="min-h-screen bg-gray-100 flex items-center justify-center"><div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>
 
   return (
     <div className="min-h-screen bg-gray-100/50 pb-12">
       <Header />
 
       <main className="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8 mt-8">
+        
+        {user?.role === 'client' && <PaymentMethodsSection />}
+        {(user?.role === 'driver' || user?.role === 'messenger') && <PayoutMethodsSection />}
+
+        <InvoiceList invoices={invoices} />
+
         <div className="flex items-center gap-3 mb-8 px-4 sm:px-0">
           <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-gray-100 flex items-center justify-center">
             <CreditCard className="w-6 h-6 text-primary" />
@@ -85,16 +91,10 @@ const PaymentsPage = () => {
             ) : (
               <div className="divide-y divide-gray-100">
                 {payments.map((payment, i) => (
-                  <motion.div 
-                    initial={{ opacity: 0, x: -10 }} 
-                    animate={{ opacity: 1, x: 0 }} 
-                    transition={{ delay: i * 0.05 }}
-                    key={payment.id} 
-                    className="p-4 sm:p-6 hover:bg-gray-50/50 transition-colors rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-6"
-                  >
+                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} key={payment.id} className="p-4 sm:p-6 hover:bg-gray-50/50 transition-colors rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex-1">
                       <div className="flex flex-wrap items-center gap-3 mb-3">
-                        <span className="text-xs font-bold text-gray-400 font-mono tracking-wider flex items-center"><Hash className="w-3 h-3 mr-0.5" />{payment.id}</span>
+                        <span className="text-xs font-bold text-gray-400 font-mono tracking-wider flex items-center"><Hash className="w-3 h-3 mr-0.5" />{payment.id.substring(0,8)}</span>
                         {getStatusBadge(payment.status)}
                       </div>
                       
@@ -106,7 +106,7 @@ const PaymentsPage = () => {
 
                       <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-gray-500">
                         <div className="flex items-center gap-1.5 bg-gray-100 px-2 py-1 rounded-lg">
-                          <User className="w-3.5 h-3.5" /> {user?.role === 'client' ? `Transp: ${payment.driver_name}` : `Cliente: ${payment.client_name}`}
+                          <User className="w-3.5 h-3.5" /> {user?.role === 'client' ? `Transp: ${payment.driver_name || 'N/A'}` : `Cliente: ${payment.client_name || 'N/A'}`}
                         </div>
                         <div className="flex items-center gap-1.5 border border-gray-100 px-2 py-1 rounded-lg">
                           <Calendar className="w-3.5 h-3.5" /> 
@@ -123,12 +123,7 @@ const PaymentsPage = () => {
 
                       {user?.role === 'client' && payment.status === 'held' && (
                         <div className="mt-0 md:mt-3">
-                          <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => releasePayment(payment.id)}
-                            className="bg-success text-white font-bold px-4 py-2 rounded-xl text-sm shadow-sm shadow-success/20 hover:bg-emerald-600 transition-colors flex items-center gap-2"
-                          >
+                          <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => releasePayment(payment.id)} className="bg-success text-white font-bold px-4 py-2 rounded-xl text-sm shadow-sm shadow-success/20 hover:bg-emerald-600 transition-colors flex items-center gap-2">
                             <CheckCircle className="w-4 h-4" /> Liberar Pago
                           </motion.button>
                         </div>

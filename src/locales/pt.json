@@ -1,0 +1,92 @@
+{
+  "app_name": "LogiBid",
+  "login": {
+    "title": "Entrar",
+    "email": "E-mail",
+    "password": "Senha",
+    "button": "Entrar",
+    "no_account": "Não tem conta?",
+    "register": "Cadastre-se"
+  },
+  "register": {
+    "title": "Criar Conta",
+    "name": "Nome Completo",
+    "email": "E-mail",
+    "phone": "Telefone",
+    "password": "Senha",
+    "role": "Tipo de Usuário",
+    "client": "Cliente",
+    "driver": "Motorista",
+    "messenger": "Mensageiro (Moto)",
+    "button": "Cadastrar",
+    "has_account": "Já possui conta?",
+    "login": "Entrar"
+  },
+  "dashboard": {
+    "title": "Painel de Controle",
+    "welcome": "Bem-vindo",
+    "active_requests": "Pedidos Ativos",
+    "completed_requests": "Concluídos",
+    "new_request": "Novo Pedido",
+    "view_all": "Ver Todos"
+  },
+  "requests": {
+    "title": "Pedidos de Transporte",
+    "create_title": "Criar Novo Pedido",
+    "pickup": "Ponto de Coleta",
+    "delivery": "Ponto de Entrega",
+    "weight": "Peso (kg)",
+    "budget": "Orçamento",
+    "description": "Descrição",
+    "instructions": "Instruções para o motorista",
+    "service_type": "Tipo de Serviço",
+    "immediate": "Imediato",
+    "scheduled": "Agendado",
+    "schedule_date": "Data Agendada",
+    "submit": "Publicar Pedido",
+    "cancel": "Cancelar",
+    "distance": "Distância",
+    "duration": "Tempo Estimado",
+    "suggested_price": "Preço sugerido",
+    "use_my_location": "Usar minha localização",
+    "swap_points": "Inverter pontos"
+  },
+  "bids": {
+    "title": "Ofertas Recebidas",
+    "amount": "Valor da Oferta",
+    "message": "Mensagem",
+    "accept": "Aceitar Oferta",
+    "reject": "Rejeitar",
+    "driver": "Motorista",
+    "no_bids": "Nenhuma oferta ainda"
+  },
+  "payments": {
+    "title": "Pagamentos",
+    "amount": "Valor",
+    "status": "Status",
+    "held": "Retido",
+    "released": "Liberado",
+    "refunded": "Reembolsado",
+    "release": "Liberar Pagamento"
+  },
+  "admin": {
+    "title": "Painel Admin",
+    "users": "Usuários",
+    "requests": "Pedidos",
+    "bids": "Ofertas",
+    "payments": "Pagamentos",
+    "reports": "Relatórios",
+    "config": "Configurações"
+  },
+  "errors": {
+    "generic": "Ocorreu um erro",
+    "network": "Erro de conexão",
+    "unauthorized": "Não autorizado",
+    "not_found": "Não encontrado"
+  },
+  "success": {
+    "created": "Criado com sucesso",
+    "updated": "Atualizado com sucesso",
+    "deleted": "Excluído com sucesso"
+  }
+}

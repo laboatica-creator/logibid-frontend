@@ -1,25 +1,28 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth'
+import { useLanguage } from '../../context/LanguageContext'
+import LanguageSwitcher from './LanguageSwitcher'
 import { Truck, Menu, X, LogOut, User as UserIcon, LayoutDashboard, FileText, CreditCard, Shield } from 'lucide-react'
 
 const Header = () => {
   const { user, logout } = useAuth()
   const location = useLocation()
+  const { t } = useLanguage()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const baseLinks = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Solicitudes', path: '/requests', icon: FileText },
-    { name: 'Pagos', path: '/payments', icon: CreditCard },
+    { name: t('dashboard.title'), path: '/dashboard', icon: LayoutDashboard },
+    { name: t('requests.title'), path: '/requests', icon: FileText },
+    { name: t('payments.title'), path: '/payments', icon: CreditCard },
   ]
   
   const adminLinks = [
-    { name: 'Panel Admin', path: '/admin', icon: Shield },
-    { name: 'Usuarios', path: '/admin/users', icon: UserIcon },
-    { name: 'Solicitudes', path: '/admin/requests', icon: FileText },
-    { name: 'Ofertas', path: '/admin/bids', icon: FileText },
-    { name: 'Pagos', path: '/admin/payments', icon: CreditCard },
+    { name: t('admin.panel'), path: '/admin', icon: Shield },
+    { name: t('admin.users'), path: '/admin/users', icon: UserIcon },
+    { name: t('admin.requests'), path: '/admin/requests', icon: FileText },
+    { name: t('admin.bids'), path: '/admin/bids', icon: FileText },
+    { name: t('admin.payments'), path: '/admin/payments', icon: CreditCard },
   ]
 
   const links = user?.role === 'admin' ? adminLinks : baseLinks
@@ -55,6 +58,7 @@ const Header = () => {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
+          <LanguageSwitcher />
           <div className="flex items-center gap-3 px-3 py-1.5 bg-gray-50 rounded-full border border-gray-100">
             <div className={`w-8 h-8 ${user?.role === 'admin' ? 'bg-purple-600' : 'bg-primary'} rounded-full flex items-center justify-center shadow-sm`}>
               <UserIcon className="w-4 h-4 text-white" />

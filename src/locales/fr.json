@@ -1,0 +1,92 @@
+{
+  "app_name": "LogiBid",
+  "login": {
+    "title": "Connexion",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "button": "Se connecter",
+    "no_account": "Pas de compte?",
+    "register": "S'inscrire"
+  },
+  "register": {
+    "title": "Créer un compte",
+    "name": "Nom complet",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "password": "Mot de passe",
+    "role": "Type d'utilisateur",
+    "client": "Client",
+    "driver": "Chauffeur",
+    "messenger": "Coursier (Moto)",
+    "button": "S'inscrire",
+    "has_account": "Déjà inscrit?",
+    "login": "Connexion"
+  },
+  "dashboard": {
+    "title": "Tableau de Bord",
+    "welcome": "Bienvenue",
+    "active_requests": "Demandes Actives",
+    "completed_requests": "Terminées",
+    "new_request": "Nouvelle Demande",
+    "view_all": "Voir tout"
+  },
+  "requests": {
+    "title": "Demandes de Transport",
+    "create_title": "Créer une Demande",
+    "pickup": "Point d'enlèvement",
+    "delivery": "Point de livraison",
+    "weight": "Poids (kg)",
+    "budget": "Budget",
+    "description": "Description",
+    "instructions": "Instructions pour le chauffeur",
+    "service_type": "Type de service",
+    "immediate": "Immédiat",
+    "scheduled": "Planifié",
+    "schedule_date": "Date planifiée",
+    "submit": "Publier",
+    "cancel": "Annuler",
+    "distance": "Distance",
+    "duration": "Temps estimé",
+    "suggested_price": "Prix suggéré",
+    "use_my_location": "Utiliser ma position",
+    "swap_points": "Échanger les points"
+  },
+  "bids": {
+    "title": "Offres reçues",
+    "amount": "Montant",
+    "message": "Message",
+    "accept": "Accepter l'offre",
+    "reject": "Rejeter",
+    "driver": "Chauffeur",
+    "no_bids": "Aucune offre"
+  },
+  "payments": {
+    "title": "Paiements",
+    "amount": "Montant",
+    "status": "Statut",
+    "held": "Retenu",
+    "released": "Libéré",
+    "refunded": "Remboursé",
+    "release": "Libérer le paiement"
+  },
+  "admin": {
+    "title": "Panneau Admin",
+    "users": "Utilisateurs",
+    "requests": "Demandes",
+    "bids": "Offres",
+    "payments": "Paiements",
+    "reports": "Rapports",
+    "config": "Configuration"
+  },
+  "errors": {
+    "generic": "Une erreur est survenue",
+    "network": "Erreur réseau",
+    "unauthorized": "Non autorisé",
+    "not_found": "Introuvable"
+  },
+  "success": {
+    "created": "Créé avec succès",
+    "updated": "Mis à jour avec succès",
+    "deleted": "Supprimé avec succès"
+  }
+}

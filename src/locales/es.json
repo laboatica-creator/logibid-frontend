@@ -1,0 +1,92 @@
+{
+  "app_name": "LogiBid",
+  "login": {
+    "title": "Iniciar Sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "button": "Ingresar",
+    "no_account": "¿No tienes cuenta?",
+    "register": "Regístrate"
+  },
+  "register": {
+    "title": "Crear Cuenta",
+    "name": "Nombre completo",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "password": "Contraseña",
+    "role": "Tipo de usuario",
+    "client": "Cliente",
+    "driver": "Transportista",
+    "messenger": "Mensajero (Moto)",
+    "button": "Registrarse",
+    "has_account": "¿Ya tienes cuenta?",
+    "login": "Inicia Sesión"
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "welcome": "Bienvenido",
+    "active_requests": "Solicitudes Activas",
+    "completed_requests": "Completadas",
+    "new_request": "Nueva Solicitud",
+    "view_all": "Ver Todas"
+  },
+  "requests": {
+    "title": "Solicitudes de Transporte",
+    "create_title": "Crear Nueva Solicitud",
+    "pickup": "Punto de Recogida",
+    "delivery": "Punto de Entrega",
+    "weight": "Peso (kg)",
+    "budget": "Presupuesto",
+    "description": "Descripción",
+    "instructions": "Instrucciones para el transportista",
+    "service_type": "Tipo de Servicio",
+    "immediate": "Inmediato",
+    "scheduled": "Programado",
+    "schedule_date": "Fecha Programada",
+    "submit": "Publicar Solicitud",
+    "cancel": "Cancelar",
+    "distance": "Distancia",
+    "duration": "Tiempo estimado",
+    "suggested_price": "Precio sugerido",
+    "use_my_location": "Usar mi ubicación",
+    "swap_points": "Intercambiar origen/destino"
+  },
+  "bids": {
+    "title": "Ofertas Recibidas",
+    "amount": "Monto ofertado",
+    "message": "Mensaje",
+    "accept": "Aceptar Oferta",
+    "reject": "Rechazar",
+    "driver": "Transportista",
+    "no_bids": "Aún no hay ofertas"
+  },
+  "payments": {
+    "title": "Pagos",
+    "amount": "Monto",
+    "status": "Estado",
+    "held": "Retenido",
+    "released": "Liberado",
+    "refunded": "Reembolsado",
+    "release": "Liberar Pago"
+  },
+  "admin": {
+    "title": "Panel de Administración",
+    "users": "Usuarios",
+    "requests": "Solicitudes",
+    "bids": "Ofertas",
+    "payments": "Pagos",
+    "reports": "Reportes",
+    "config": "Configuración"
+  },
+  "errors": {
+    "generic": "Ha ocurrido un error",
+    "network": "Error de conexión",
+    "unauthorized": "No autorizado",
+    "not_found": "No encontrado"
+  },
+  "success": {
+    "created": "Creado exitosamente",
+    "updated": "Actualizado exitosamente",
+    "deleted": "Eliminado exitosamente"
+  }
+}

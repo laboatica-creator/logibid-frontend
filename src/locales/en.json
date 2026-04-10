@@ -1,0 +1,92 @@
+{
+  "app_name": "LogiBid",
+  "login": {
+    "title": "Sign In",
+    "email": "Email Address",
+    "password": "Password",
+    "button": "Sign In",
+    "no_account": "Don't have an account?",
+    "register": "Sign Up"
+  },
+  "register": {
+    "title": "Create Account",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "password": "Password",
+    "role": "User Type",
+    "client": "Client",
+    "driver": "Driver",
+    "messenger": "Courier (Moto)",
+    "button": "Sign Up",
+    "has_account": "Already have an account?",
+    "login": "Sign In"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "active_requests": "Active Requests",
+    "completed_requests": "Completed",
+    "new_request": "New Request",
+    "view_all": "View All"
+  },
+  "requests": {
+    "title": "Transport Requests",
+    "create_title": "Create New Request",
+    "pickup": "Pickup Location",
+    "delivery": "Delivery Location",
+    "weight": "Weight (kg)",
+    "budget": "Budget",
+    "description": "Description",
+    "instructions": "Instructions for Driver",
+    "service_type": "Service Type",
+    "immediate": "Immediate",
+    "scheduled": "Scheduled",
+    "schedule_date": "Scheduled Date",
+    "submit": "Submit Request",
+    "cancel": "Cancel",
+    "distance": "Distance",
+    "duration": "Estimated Time",
+    "suggested_price": "Suggested Price",
+    "use_my_location": "Use my location",
+    "swap_points": "Swap pickup/dropoff"
+  },
+  "bids": {
+    "title": "Bids Received",
+    "amount": "Bid Amount",
+    "message": "Message",
+    "accept": "Accept Bid",
+    "reject": "Reject",
+    "driver": "Driver",
+    "no_bids": "No bids yet"
+  },
+  "payments": {
+    "title": "Payments",
+    "amount": "Amount",
+    "status": "Status",
+    "held": "On Hold",
+    "released": "Released",
+    "refunded": "Refunded",
+    "release": "Release Payment"
+  },
+  "admin": {
+    "title": "Admin Panel",
+    "users": "Users",
+    "requests": "Requests",
+    "bids": "Bids",
+    "payments": "Payments",
+    "reports": "Reports",
+    "config": "Settings"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "network": "Network error",
+    "unauthorized": "Unauthorized",
+    "not_found": "Not found"
+  },
+  "success": {
+    "created": "Created successfully",
+    "updated": "Updated successfully",
+    "deleted": "Deleted successfully"
+  }
+}

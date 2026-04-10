@@ -7,10 +7,15 @@ import { toast } from 'sonner'
 import api from '../services/api'
 import Header from '../components/Layout/Header'
 import TrackingMap from '../components/Map/TrackingMap'
+import DriverRouteMap from '../components/Map/DriverRouteMap'
+import RouteInfo from '../components/Map/RouteInfo'
 import Chat from '../components/Chat/Chat'
 import { loadStripe } from '@stripe/stripe-js'
+import { io } from 'socket.io-client'
+import { playNewBidSound, playBidAcceptedSound, initSoundContext } from '../services/soundService'
+import DriverLocationService from '../services/DriverLocationService'
 
-const stripePromise = loadStripe('pk_test_placeholder') // Remplazar con env (STRIPE_PUBLISHABLE_KEY)
+const stripePromise = loadStripe('pk_test_placeholder')
 
 const RequestDetailPage = () => {
   const { id } = useParams()
@@ -24,9 +29,38 @@ const RequestDetailPage = () => {
   
   const [bidAmount, setBidAmount] = useState('')
   const [bidMessage, setBidMessage] = useState('')
+  
+  const [driverLocation, setDriverLocation] = useState(null)
+  const [routeStats, setRouteStats] = useState(null)
 
   useEffect(() => {
+    initSoundContext()
     fetchData()
+
+    const socket = io('https://logibid-api.onrender.com')
+    socket.on('connect', () => console.log('Socket Tracking Activo'))
+    
+    socket.on('new_bid', (data) => {
+      if (data.request_id === id) {
+        if(user?.role === 'client') playNewBidSound()
+        fetchData()
+      }
+    })
+
+    socket.on('bid_accepted', (data) => {
+      if (data.request_id === id) {
+        if(user?.role === 'driver') playBidAcceptedSound()
+        fetchData()
+      }
+    })
+
+    socket.on('driver-location-update', (data) => {
+       if(data.request_id === id) {
+         setDriverLocation({ lat: data.lat, lng: data.lng })
+       }
+    })
+
+    return () => socket.disconnect()
   }, [id])
 
   const fetchData = async () => {
@@ -36,7 +70,8 @@ const RequestDetailPage = () => {
         api.get(`/bids/request/${id}`).catch(() => ({ data: [] })),
         api.get('/system-config').catch(() => ({ data: [] }))
       ])
-      setRequest(reqRes.data)
+      const r = reqRes.data
+      setRequest(r)
       setBids(bidsRes.data || [])
 
       if (cfgRes.data.length > 0) {
@@ -51,14 +86,22 @@ const RequestDetailPage = () => {
     }
   }
 
+  const isAssigned = request?.status === 'assigned' || request?.status === 'completed'
+  const acceptedBid = bids.find(b => b.status === 'accepted')
+  const myAcceptedBid = user?.role === 'driver' && acceptedBid?.driver_id === user.id
+
+  useEffect(() => {
+    // Si soy el Transportista en Viaje -> Track location via Geolocation y emit it
+    if (user?.role === 'driver' && isAssigned && myAcceptedBid) {
+       DriverLocationService.startTracking(user.id, id);
+    }
+    return () => DriverLocationService.stopTracking()
+  }, [user, isAssigned, myAcceptedBid])
+
   const handleMakeBid = async (e) => {
     e.preventDefault()
     try {
-      await api.post('/bids', {
-        request_id: id,
-        amount: Number(bidAmount),
-        message: bidMessage
-      })
+      await api.post('/bids', { request_id: id, amount: Number(bidAmount), message: bidMessage })
       toast.success('Oferta enviada exitosamente')
       setBidAmount('')
       setBidMessage('')
@@ -70,16 +113,11 @@ const RequestDetailPage = () => {
 
   const handleAcceptBid = async (bidId, amount) => {
     if(!window.confirm('¿Aceptar esta oferta e ir al pago?')) return
-    
-    // Calcular costos con seguro
     const seguroCalculado = amount * (config.seguroPorcentaje / 100)
     const neto = amount + seguroCalculado
 
     try {
-      // Formalizando Oferta con Seguro
-      await api.patch(`/bids/${bidId}/accept`, {
-        seguro: { porcentaje: config.seguroPorcentaje, monto: seguroCalculado, coberturaMaxima: config.seguroCoberturaMaxima }
-      })
+      await api.patch(`/bids/${bidId}/accept`, { seguro: { porcentaje: config.seguroPorcentaje, monto: seguroCalculado } })
       toast.success(`Oferta aceptada. Monto total con seguro: $${neto.toFixed(2)}`)
       fetchData()
     } catch (err) {
@@ -89,10 +127,6 @@ const RequestDetailPage = () => {
 
   if (loading) return <div className="min-h-screen bg-gray-100 flex items-center justify-center"><div className="w-16 h-16 border-4 border-primary border-t-transparent flex items-center justify-center rounded-full animate-spin"></div></div>
   if (!request) return <div className="text-center mt-20">Solicitud no encontrada</div>
-
-  const isAssigned = request.status === 'assigned' || request.status === 'completed'
-  const acceptedBid = bids.find(b => b.status === 'accepted')
-  const myAcceptedBid = user?.role === 'driver' && acceptedBid?.driver_id === user.id
 
   const timelineFlow = ["pending", "assigned", "picking_up", "picked_up", "delivering", "arrived", "completed"]
   const cxStatus = (request.status || "pending")
@@ -108,7 +142,6 @@ const RequestDetailPage = () => {
             <ArrowLeft className="w-4 h-4" /> Volver a solicitudes
           </button>
 
-          {/* Detalles de la Solicitud */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
               <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
@@ -119,7 +152,15 @@ const RequestDetailPage = () => {
               </span>
             </div>
 
-            <TrackingMap pickupStr={request.pickup_address} deliveryStr={request.delivery_address} status={cxStatus} />
+            {user?.role === 'driver' ? (
+               <DriverRouteMap pickupStr={request.pickup_address} deliveryStr={request.delivery_address} driverLocation={driverLocation} onUpdateRoute={setRouteStats} />
+            ) : (
+               <TrackingMap pickupStr={request.pickup_address} deliveryStr={request.delivery_address} driverLocation={driverLocation} onUpdateRoute={setRouteStats} />
+            )}
+
+            {routeStats && (
+               <RouteInfo distance={Number(routeStats.distance)} duration={Number(routeStats.duration)} budget={Number(request.budget)} originName={request.pickup_address} destName={request.delivery_address} />
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 bg-gray-50 p-4 rounded-xl">
               <div>

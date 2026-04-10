@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import api from '../../services/api'
-import { CheckCircle, XCircle } from 'lucide-react'
 import { toast } from 'sonner'
 
 const PaymentList = () => {
@@ -13,67 +12,75 @@ const PaymentList = () => {
 
   const fetchPayments = async () => {
     try {
-      const { data } = await api.get('/payments') 
-      setPayments(data || [])
-    } catch (e) {
-      toast.error('No se pudo conectar a los pagos')
+      const res = await api.get('/admin/payments')
+      setPayments(res.data)
+    } catch (error) {
+      toast.error('Error cargando pagos')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleAction = async (action, id) => {
-    const isRelease = action === 'release'
-    if(!window.confirm(`¿Seguro que deseas ${isRelease ? 'liberar' : 'reembolsar'} este pago?`)) return
+  const releasePayment = async (id) => {
+    if (!confirm('¿Liberar este pago al transportista?')) return
     try {
-      await api.post(`/payments/${action}`, { payment_id: id })
-      toast.success(isRelease ? 'Fondos liberados al transportista' : 'Reembolso ejecutado')
+      await api.post(`/admin/payments/${id}/release`)
+      toast.success('Pago liberado')
       fetchPayments()
-    } catch(e) {
-      toast.error(`Error al ejecutar acción sobre el pago`)
+    } catch (error) {
+      toast.error('Error liberando pago')
     }
   }
 
-  if (loading) return <div className="p-8 text-center"><div className="w-8 h-8 border-4 border-primary border-t-transparent flex items-center justify-center mx-auto rounded-full animate-spin"></div></div>
+  const refundPayment = async (id) => {
+    if (!confirm('¿Reembolsar este pago al cliente?')) return
+    try {
+      await api.post(`/admin/payments/${id}/refund`)
+      toast.success('Pago reembolsado')
+      fetchPayments()
+    } catch (error) {
+      toast.error('Error reembolsando pago')
+    }
+  }
+
+  const getStatusBadge = (status) => {
+    const styles = {
+      held: 'bg-blue-100 text-blue-800',
+      released: 'bg-green-100 text-green-800',
+      refunded: 'bg-red-100 text-red-800',
+      pending: 'bg-yellow-100 text-yellow-800'
+    }
+    return <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status] || 'bg-gray-100'}`}>{status}</span>
+  }
+
+  if (loading) return <div className="text-center py-8">Cargando pagos...</div>
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-50 border-b border-gray-100 text-sm text-gray-500">
-              <th className="p-3">ID Pago</th>
-              <th className="p-3">ID Oferta Base</th>
-              <th className="p-3 text-right">Monto (Escrow)</th>
-              <th className="p-3 border-l border-gray-100 pl-4">Estado</th>
-              <th className="p-3 text-right">Controles Retenidos</th>
+    <div className="overflow-x-auto">
+      <table className="min-w-full bg-white rounded-xl overflow-hidden shadow">
+        <thead className="bg-gray-100">
+          <tr><th className="px-4 py-3 text-left">Solicitud</th><th className="px-4 py-3 text-left">Cliente</th><th className="px-4 py-3 text-left">Transportista</th><th className="px-4 py-3 text-left">Monto</th><th className="px-4 py-3 text-left">Estado</th><th className="px-4 py-3 text-left">Acciones</th></tr>
+        </thead>
+        <tbody>
+          {payments.map(payment => (
+            <tr key={payment.id} className="border-t">
+              <td className="px-4 py-3 text-sm">{payment.request_id?.substring(0, 8)}...</td>
+              <td className="px-4 py-3">{payment.client_name || payment.client_id}</td>
+              <td className="px-4 py-3">{payment.driver_name || payment.driver_id}</td>
+              <td className="px-4 py-3 font-bold">${payment.amount}</td>
+              <td className="px-4 py-3">{getStatusBadge(payment.status)}</td>
+              <td className="px-4 py-3 space-x-2">
+                {payment.status === 'held' && (
+                  <button onClick={() => releasePayment(payment.id)} className="bg-green-500 text-white px-2 py-1 rounded text-sm hover:bg-green-600">Liberar</button>
+                )}
+                {payment.status === 'held' && (
+                  <button onClick={() => refundPayment(payment.id)} className="bg-orange-500 text-white px-2 py-1 rounded text-sm hover:bg-orange-600">Reembolsar</button>
+                )}
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {payments.map(p => (
-              <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/50">
-                <td className="p-3 text-sm text-gray-400">#{p.id}</td>
-                <td className="p-3 text-sm">#{p.bid_id}</td>
-                <td className="p-3 text-right font-bold text-gray-900">${p.amount}</td>
-                <td className="p-3 border-l border-gray-100 pl-4 text-sm">
-                  <span className={`px-2 py-1 flex w-max items-center gap-1 rounded-lg ${p.status === 'released' ? 'bg-green-100 text-green-700' : p.status === 'refunded' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
-                    {p.status}
-                  </span>
-                </td>
-                <td className="p-3 text-right">
-                  {p.status === 'held' || p.status === 'pending' ? (
-                     <div className="flex justify-end gap-2">
-                       <button onClick={() => handleAction('release', p.id)} className="px-3 py-1.5 flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-lg transition-colors"><CheckCircle className="w-3 h-3"/> Liberar</button>
-                       <button onClick={() => handleAction('refund', p.id)} className="px-3 py-1.5 flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-xs font-bold rounded-lg transition-colors"><XCircle className="w-3 h-3"/> Reembolso</button>
-                     </div>
-                  ) : <span className="text-xs text-gray-400 font-semibold px-2">Cerrado</span>}
-                </td>
-              </tr>
-            ))}
-            {payments.length === 0 && <tr><td colSpan="5" className="p-4 text-center text-gray-500">No se encontraron transacciones financieras</td></tr>}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

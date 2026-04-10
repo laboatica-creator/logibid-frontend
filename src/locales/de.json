@@ -1,0 +1,92 @@
+{
+  "app_name": "LogiBid",
+  "login": {
+    "title": "Anmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "button": "Einloggen",
+    "no_account": "Noch kein Konto?",
+    "register": "Registrieren"
+  },
+  "register": {
+    "title": "Konto erstellen",
+    "name": "Vollständiger Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "password": "Passwort",
+    "role": "Benutzertyp",
+    "client": "Kunde",
+    "driver": "Fahrer",
+    "messenger": "Kurier (Motorrad)",
+    "button": "Registrieren",
+    "has_account": "Bereits ein Konto?",
+    "login": "Anmelden"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Willkommen",
+    "active_requests": "Aktive Anfragen",
+    "completed_requests": "Abgeschlossen",
+    "new_request": "Neue Anfrage",
+    "view_all": "Alle ansehen"
+  },
+  "requests": {
+    "title": "Transportanfragen",
+    "create_title": "Neue Anfrage erstellen",
+    "pickup": "Abholort",
+    "delivery": "Lieferort",
+    "weight": "Gewicht (kg)",
+    "budget": "Budget",
+    "description": "Beschreibung",
+    "instructions": "Anweisungen für Fahrer",
+    "service_type": "Service-Typ",
+    "immediate": "Sofort",
+    "scheduled": "Geplant",
+    "schedule_date": "Geplantes Datum",
+    "submit": "Anfrage senden",
+    "cancel": "Stornieren",
+    "distance": "Entfernung",
+    "duration": "Geschätzte Zeit",
+    "suggested_price": "Empfohlener Preis",
+    "use_my_location": "Meinen Standort verwenden",
+    "swap_points": "Punkte tauschen"
+  },
+  "bids": {
+    "title": "Erhaltene Gebote",
+    "amount": "Gebotsbetrag",
+    "message": "Nachricht",
+    "accept": "Gebot annehmen",
+    "reject": "Ablehnen",
+    "driver": "Fahrer",
+    "no_bids": "Noch keine Gebote"
+  },
+  "payments": {
+    "title": "Zahlungen",
+    "amount": "Betrag",
+    "status": "Status",
+    "held": "Zurückgehalten",
+    "released": "Freigegeben",
+    "refunded": "Erstattet",
+    "release": "Zahlung freigeben"
+  },
+  "admin": {
+    "title": "Admin-Bereich",
+    "users": "Benutzer",
+    "requests": "Anfragen",
+    "bids": "Gebote",
+    "payments": "Zahlungen",
+    "reports": "Berichte",
+    "config": "Einstellungen"
+  },
+  "errors": {
+    "generic": "Ein Fehler ist aufgetreten",
+    "network": "Netzwerkfehler",
+    "unauthorized": "Nicht autorisiert",
+    "not_found": "Nicht gefunden"
+  },
+  "success": {
+    "created": "Erfolgreich erstellt",
+    "updated": "Erfolgreich aktualisiert",
+    "deleted": "Erfolgreich gelöscht"
+  }
+}
